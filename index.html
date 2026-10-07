@@ -151,13 +151,47 @@ function getShift(code){return shifts.find(s=>norm(s['CÓD ESCALA'])===norm(code
 function shiftTime(code){let s=getShift(code);return s?`${s['INÍCIO JORNADA']||''} - ${s['FIM JORNADA']||''}`:''}
 function shiftWorkHours(code){
  let s=getShift(code); if(!s)return '8';
- let raw=String(s['JORNADA TRABALHADA']||'').trim().replace(',','.');
- let m=raw.match(/\d+(?:\.\d+)?/);
- if(m)return String(parseFloat(m[0]));
- // fallback: calcula início/fim e desconta intervalo quando os dados forem horários válidos
- function mins(v){let z=String(v||'').match(/(\d{1,2})[:hH](\d{2})/);return z?(+z[1])*60+(+z[2]):null}
+ let v=s['JORNADA TRABALHADA'];
+
+ // Excel pode importar horários como fração de 1 dia:
+ // 08:00 = 0.333333..., 07:00 = 0.291666..., etc.
+ if(typeof v==='number'){
+   let h=(v>0 && v<=1)?v*24:v;
+   let rounded=Math.round(h*100)/100;
+   return Number.isInteger(rounded)?String(rounded):String(rounded).replace('.',',');
+ }
+
+ let raw=String(v??'').trim().replace(',','.');
+ // também trata fração numérica que tenha vindo como texto
+ if(/^\d*\.?\d+$/.test(raw)){
+   let n=parseFloat(raw);
+   let h=(n>0 && n<=1)?n*24:n;
+   let rounded=Math.round(h*100)/100;
+   return Number.isInteger(rounded)?String(rounded):String(rounded).replace('.',',');
+ }
+
+ // trata horários como 08:00, 8:00 ou 08:00:00
+ let tm=raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+ if(tm){
+   let h=Number(tm[1])+Number(tm[2])/60;
+   let rounded=Math.round(h*100)/100;
+   return Number.isInteger(rounded)?String(rounded):String(rounded).replace('.',',');
+ }
+
+ // fallback pela duração da jornada e intervalo
+ function mins(x){
+   let z=String(x||'').match(/(\d{1,2})[:hH](\d{2})/);
+   return z?(+z[1])*60+(+z[2]):null;
+ }
  let a=mins(s['INÍCIO JORNADA']),b=mins(s['FIM JORNADA']);
- if(a!==null&&b!==null){if(b<a)b+=1440;let total=b-a;let ints=String(s['INTERVALO']||'').match(/(\d{1,2})[:hH](\d{2}).*?(\d{1,2})[:hH](\d{2})/);if(ints){let ia=(+ints[1])*60+(+ints[2]),ib=(+ints[3])*60+(+ints[4]);if(ib<ia)ib+=1440;total-=Math.max(0,ib-ia)}return String(Math.max(0,total/60)).replace('.5',',5')}
+ if(a!==null&&b!==null){
+   if(b<a)b+=1440;
+   let total=b-a;
+   let tempo=String(s['TEMPO INTERVALO']||'').match(/(\d+(?:[.,]\d+)?)\s*h/i);
+   if(tempo) total-=parseFloat(tempo[1].replace(',','.'))*60;
+   let h=Math.max(0,total/60), rounded=Math.round(h*100)/100;
+   return Number.isInteger(rounded)?String(rounded):String(rounded).replace('.',',');
+ }
  return '8';
 }
 function fillFilters(){
