@@ -150,7 +150,7 @@ body.dark .hist-date{background:#14263a;border-color:#34506d;color:#d9ebff}.impo
   <div class="toolbar">
     <div><label>Pesquisar</label><input id="searchHist" placeholder="Matrícula, nome, equipe ou escala" oninput="renderHistory()"></div>
     <div><label>Situação</label><select id="histStatus" onchange="renderHistory()"><option value="">Todas</option><option value="PERMITIDO">Permitidas</option><option value="ALERTA">Alertas &lt; 90 dias</option></select></div>
-    <div><label>Período do histórico</label><input id="histMonth" type="month" onchange="renderHistory()"></div>
+    <div><label>Mês / Ano</label><input id="histMonth" type="month" title="Filtrar histórico por mês e ano" onchange="renderHistory()"></div>
     <button class="secondary" onclick="document.getElementById('importHistExcel').click()">📥 Importar Histórico</button><input id="importHistExcel" class="file-hidden" type="file" accept=".xlsx,.xls" onchange="importHistoryExcel(this.files[0]);this.value=''">
     <button class="secondary" onclick="exportHistoryExcel()">📊 Exportar Histórico</button><div id="histImportSummary" class="import-summary"></div>
   </div>
@@ -426,12 +426,88 @@ function shiftCodeFromSchedule(v){let t=normalizeTimeText(v).replace(/:/g,'');le
 function readWorkbookRows(file){return new Promise((resolve,reject)=>{if(!file)return reject(new Error('Selecione um arquivo Excel.'));let r=new FileReader();r.onload=()=>{try{let wb=XLSX.read(r.result,{type:'array',cellDates:true});let out=[];wb.SheetNames.forEach(sn=>{let rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false});rows.forEach(x=>out.push({...x,__sheet:sn}))});resolve(out)}catch(e){reject(e)}};r.onerror=reject;r.readAsArrayBuffer(file)})}
 async function importEmployeesExcel(file){
  if(typeof XLSX==='undefined')return alert('Recurso de Excel indisponível.');
- try{let rows=await readWorkbookRows(file),ok=0,upd=0,skip=0;for(let r of rows){let mat=String(rowVal(r,['MATRICULA','MATRÍCULA'])).replace(/\.0$/,'').trim(),nome=String(rowVal(r,['COLABORADOR','NOME'])).trim();if(!mat||!nome){skip++;continue}let base=String(rowVal(r,['MUNICIPIO','MUNICÍPIO','CIDADE LOTAÇÃO','BASE'])).trim().toUpperCase(),equipe=String(rowVal(r,['EQUIPE','PREFIXOS','PREFIXO'])).trim().toUpperCase(),hor=String(rowVal(r,['HORARIO','HORÁRIO','HORARIOS'])).trim(),codigo=String(rowVal(r,['ESCALA MARÇO','CODIGO','CÓDIGO','CODIGO DA ESCALA'])).trim()||shiftCodeFromSchedule(hor),turma=String(rowVal(r,['TURMA'])).trim(),cargo=String(rowVal(r,['CARGO','CARGO '])).trim().toUpperCase();let e={matricula:mat,nome:nome.toUpperCase(),base,equipe,codigo,turma,ativo:'SIM',obs:''};let i=employees.findIndex(x=>x.matricula===mat);if(i>=0){employees[i]={...employees[i],...e};upd++}else{employees.push(e);ok++}let ci=collaborators.findIndex(x=>x.matricula===mat),c={matricula:mat,nome:e.nome,cargo,base,equipe,horario:hor};if(ci>=0)collaborators[ci]={...collaborators[ci],...c};else collaborators.push(c)}save();fillPrefixFilter();fillCollaboratorFilters();renderEmployees();renderCollaborators();renderScale();alert(`Importação concluída.\nNovos eletricistas: ${ok}\nAtualizados: ${upd}\nLinhas ignoradas: ${skip}`)}catch(e){console.error(e);alert('Não foi possível importar a planilha. Verifique se ela segue o modelo Colaboradores Primarização.')}
+ try{
+  let rows=await readWorkbookRows(file),ok=0,upd=0,skip=0,naoEletricista=0;
+  for(let r of rows){
+   if(normKey(r.__sheet).includes('DESLIGADO')){skip++;continue}
+   let mat=String(rowVal(r,['MATRICULA','MATRÍCULA'])).replace(/\.0$/,'').trim();
+   let nome=String(rowVal(r,['COLABORADOR','NOME'])).trim();
+   if(!mat||!nome){skip++;continue}
+   let cargo=String(rowVal(r,['CARGO','CARGO '])).trim().toUpperCase();
+   if(cargo && !normKey(cargo).includes('ELETRICISTA')){naoEletricista++;continue}
+   let base=String(rowVal(r,['MUNICIPIO','MUNICÍPIO','CIDADE LOTAÇÃO','BASE'])).trim().toUpperCase();
+   let equipe=String(rowVal(r,['EQUIPE','PREFIXOS','PREFIXO'])).trim().toUpperCase();
+   let hor=String(rowVal(r,['HORARIO','HORÁRIO','HORARIOS'])).trim();
+   let codigo=String(rowVal(r,['ESCALA MARÇO','ESCALA MARCO','CODIGO','CÓDIGO','CODIGO DA ESCALA'])).trim()||shiftCodeFromSchedule(hor);
+   let turma=String(rowVal(r,['TURMA'])).trim();
+   let i=employees.findIndex(x=>x.matricula===mat);
+   let anterior=i>=0?employees[i]:{};
+   let e={...anterior,matricula:mat,nome:nome.toUpperCase(),base:base||anterior.base||'',equipe:equipe||anterior.equipe||'',codigo:codigo||anterior.codigo||'',turma:turma||anterior.turma||'',ativo:'SIM',obs:anterior.obs||''};
+   if(i>=0){employees[i]=e;upd++}else{employees.push(e);ok++}
+   let ci=collaborators.findIndex(x=>x.matricula===mat),antc=ci>=0?collaborators[ci]:{};
+   let c={...antc,matricula:mat,nome:e.nome,cargo:cargo||antc.cargo||'',base:e.base,equipe:e.equipe,horario:hor||antc.horario||''};
+   if(ci>=0)collaborators[ci]=c;else collaborators.push(c);
+  }
+  save();fillPrefixFilter();fillCollaboratorFilters();renderEmployees();renderCollaborators();renderScale();
+  alert(`Importação concluída.\nNovos eletricistas: ${ok}\nAtualizados: ${upd}\nNão eletricistas ignorados: ${naoEletricista}\nLinhas ignoradas: ${skip}`)
+ }catch(e){console.error(e);alert('Não foi possível importar a planilha. Verifique se ela segue o modelo Colaboradores Primarização.')}
 }
 function parseImportedDate(v){if(!v)return null;if(v instanceof Date&&!isNaN(v))return v;let s=String(v).trim();let m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[, ]+(\d{1,2}):(\d{2}))?/);if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0))}let d=new Date(s);return isNaN(d)?null:d}
+function dateFromHistoryText(v){
+ let s=String(v||'');
+ let all=[...s.matchAll(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/g)];
+ if(!all.length)return null;
+ let m=all[all.length-1],y=+m[3]; if(y>2100)return null;
+ let d=new Date(y,+m[2]-1,+m[1],12,0,0);return isNaN(d)?null:d;
+}
+function sheetMonthYear(name){
+ let n=normKey(name),months={JAN:1,JANEIRO:1,FEV:2,FEVEREIRO:2,MAR:3,MARCO:3,ABR:4,ABRIL:4,MAI:5,MAIO:5,JUN:6,JUNHO:6,JUL:7,JULHO:7,AGO:8,AGOSTO:8,SET:9,SETEMBRO:9,OUT:10,OUTUBRO:10,NOV:11,NOVEMBRO:11,DEZ:12,DEZEMBRO:12};
+ let month=0;for(let k of Object.keys(months))if(n===k||n.startsWith(k+'-')){month=months[k];break}
+ let ym=n.match(/(?:-|^)(\d{2,4})$/),year=ym?+ym[1]:2025;if(year<100)year+=2000;return {month,year};
+}
 async function importHistoryExcel(file){
  if(typeof XLSX==='undefined')return alert('Recurso de Excel indisponível.');
- try{let rows=await readWorkbookRows(file),incoming=[];for(let r of rows){let mat=String(rowVal(r,['MATRICULA','MATRÍCULA'])).replace(/\.0$/,'').trim();if(!mat)continue;let dt=parseImportedDate(rowVal(r,['DATA/HORA','DATA HORA','DATA','DATA DA MUDANÇA','DATA DA MUDANCA']));if(!dt)continue;incoming.push({raw:r,mat,dt})}incoming.sort((a,b)=>a.dt-b.dt);let imported=0,alerts=0;for(let x of incoming){let r=x.raw,mat=x.mat,dt=x.dt,nome=String(rowVal(r,['COLABORADOR','NOME'])).trim().toUpperCase()||(employees.find(e=>e.matricula===mat)?.nome||''),ca=String(rowVal(r,['ESCALA ANTERIOR','CODIGO ANTERIOR','CÓDIGO ANTERIOR'])).trim(),cn=String(rowVal(r,['ESCALA NOVA','CODIGO NOVO','CÓDIGO NOVO','NOVA ESCALA'])).trim(),codeChanged=!!cn&&ca!==cn,last=[...changeHistory,...incoming.filter(z=>z.dt<dt).map(()=>null)].filter(Boolean);let prev=[...changeHistory].filter(h=>h.matricula===mat&&h.codeChanged===true&&new Date(h.timestamp)<dt).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0],days=null,status='PERMITIDO';if(codeChanged&&prev){days=Math.floor((dt-new Date(prev.timestamp))/86400000);if(days<90)status='ALERTA'}let h={id:'imp_'+Date.now()+'_'+imported+'_'+Math.random().toString(36).slice(2,6),timestamp:dt.toISOString(),matricula:mat,nome,equipeAnterior:String(rowVal(r,['EQUIPE ANTERIOR'])).trim().toUpperCase(),equipeNova:String(rowVal(r,['EQUIPE NOVA'])).trim().toUpperCase(),codigoAnterior:ca,codigoNovo:cn,turmaAnterior:String(rowVal(r,['TURMA ANTERIOR'])).trim(),turmaNova:String(rowVal(r,['TURMA NOVA'])).trim(),codeChanged,status,dias,usuarioNome:String(rowVal(r,['ALTERADO POR','RESPONSAVEL','RESPONSÁVEL'])).trim()||'Histórico importado'};changeHistory.push(h);imported++;if(status==='ALERTA')alerts++}save();renderHistory();let el=document.getElementById('histImportSummary');if(el){el.style.display='block';el.textContent=`Importados: ${imported} • Alertas pela regra de 90 dias: ${alerts}`}alert(`Histórico importado com sucesso.\nRegistros: ${imported}\nAlertas < 90 dias: ${alerts}`)}catch(e){console.error(e);alert('Não foi possível importar o histórico. Verifique as colunas da planilha.')}
+ try{
+  let buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true}),incoming=[],ignored=0;
+  for(let sn of wb.SheetNames){
+   let grid=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:'',raw:false});
+   let hi=grid.findIndex(row=>row.some(v=>normKey(v)==='MATRICULA'||normKey(v)==='MATRÍCULA'));
+   if(hi<0){ignored+=grid.length;continue}
+   let heads=grid[hi].map(normKey),sm=sheetMonthYear(sn);
+   for(let ri=hi+1;ri<grid.length;ri++){
+    let row=grid[ri],obj={};heads.forEach((h,i)=>{if(h)obj[h]=row[i]});
+    let mat=String(obj['MATRICULA']||'').replace(/\.0$/,'').trim();if(!mat){ignored++;continue}
+    let nome=String(obj['COLABORADOR']||obj['NOME']||'').trim().toUpperCase();
+    let obs=String(obj['OBSERVACAO']||obj['OBSERVAÇÃO']||obj['OBSERVACAO 2']||obj['OBSERVAÇÃO 2']||'').trim();
+    // Em algumas abas há duas colunas Observação. Junta todas para não perder a data/motivo.
+    let obsParts=[];heads.forEach((h,i)=>{if(h.startsWith('OBSERVA')&&String(row[i]||'').trim())obsParts.push(String(row[i]).trim())});if(obsParts.length)obs=obsParts.join(' | ');
+    let dt=dateFromHistoryText(obs)||parseImportedDate(obj['DATA/HORA']||obj['DATA HORA']||obj['DATA']||obj['DATA DA MUDANCA']||obj['DATA DA MUDANÇA']);
+    if(!dt && sm.month)dt=new Date(sm.year,sm.month-1,1,12,0,0);
+    if(!dt){ignored++;continue}
+    let codigo=String(obj['TIPO ESCALA OUT']||obj['TIPO ESCALA SET']||obj['TIPO ESCALA AGO']||obj['TIPO ESCALA']||obj['ESCALA NOVA']||obj['CODIGO NOVO']||obj['CÓDIGO NOVO']||'').trim();
+    let turma=String(obj['TURMA OUT']||obj['TURMA SET']||obj['TURMA AGO']||obj['TURMA']||obj['TURMA NOVA']||'').trim();
+    let equipe=String(obj['EQUIPE']||obj['EQUIPE NOVA']||'').trim().toUpperCase();
+    incoming.push({mat,nome,dt,codigo,turma,equipe,obs,sheet:sn,row:ri+1});
+   }
+  }
+  incoming.sort((a,b)=>a.dt-b.dt||a.mat.localeCompare(b.mat));
+  let imported=0,alerts=0,seen={};
+  // Estado anterior: histórico já existente, em ordem cronológica.
+  [...changeHistory].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).forEach(h=>{seen[h.matricula]={codigo:h.codigoNovo||h.codigoAnterior||'',turma:h.turmaNova||h.turmaAnterior||'',equipe:h.equipeNova||h.equipeAnterior||'',lastCodeChange:h.codeChanged?new Date(h.timestamp):null}});
+  for(let x of incoming){
+   let prev=seen[x.mat]||{},ca=prev.codigo||'',cn=x.codigo||ca,ta=prev.turma||'',tn=x.turma||ta,ea=prev.equipe||'',en=x.equipe||ea;
+   let codeChanged=!!cn&&!!ca&&ca!==cn,days=null,status='PERMITIDO';
+   if(codeChanged&&prev.lastCodeChange){days=Math.floor((x.dt-prev.lastCodeChange)/86400000);if(days>=0&&days<90)status='ALERTA'}
+   let duplicate=changeHistory.some(h=>h.matricula===x.mat&&String(h.codigoNovo||'')===cn&&String(h.turmaNova||'')===tn&&new Date(h.timestamp).toISOString().slice(0,10)===x.dt.toISOString().slice(0,10));
+   if(duplicate)continue;
+   let h={id:'imp_'+Date.now()+'_'+imported+'_'+Math.random().toString(36).slice(2,6),timestamp:x.dt.toISOString(),matricula:x.mat,nome:x.nome||(employees.find(e=>e.matricula===x.mat)?.nome||''),equipeAnterior:ea,equipeNova:en,codigoAnterior:ca,codigoNovo:cn,turmaAnterior:ta,turmaNova:tn,codeChanged,status,dias,usuarioNome:'Planilha Mudanças Escala',observacao:x.obs,origemAba:x.sheet};
+   changeHistory.push(h);imported++;if(status==='ALERTA')alerts++;
+   seen[x.mat]={codigo:cn,turma:tn,equipe:en,lastCodeChange:codeChanged?x.dt:prev.lastCodeChange||null};
+  }
+  changeHistory.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));save();renderHistory();
+  let el=document.getElementById('histImportSummary');if(el){el.style.display='block';el.textContent=`Importados: ${imported} • Alertas < 90 dias: ${alerts} • Ignorados: ${ignored}`}
+  alert(`Histórico importado com sucesso.\nRegistros novos: ${imported}\nAlertas pela regra de 90 dias: ${alerts}\nLinhas ignoradas: ${ignored}`)
+ }catch(e){console.error(e);alert('Não foi possível importar o histórico. Verifique a planilha MUDANÇAS ESCALA.')}
 }
 function exportExcel(){
  if(typeof XLSX==='undefined')return alert('Não foi possível carregar o recurso de Excel. Verifique sua conexão e tente novamente.');
