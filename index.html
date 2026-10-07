@@ -88,10 +88,10 @@
   <section class="page" id="polos"><div class="page-head"><div><h2>Polos e Equipes</h2><p>Visão automática a partir dos colaboradores carregados.</p></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Pesquisar</label><input id="qPolo" oninput="renderPolos()" placeholder="Polo ou equipe"></div></div><div class="tablewrap"><table><thead><tr><th>Polo</th><th>Qtd. equipes</th><th>Colaboradores ativos</th><th class="left">Equipes</th></tr></thead><tbody id="poloBody"></tbody></table></div></div></section>
   <section class="page" id="colaboradores"><div class="page-head"><div><h2>Colaboradores / Eletricistas</h2><p>Base completa, sem CPF ou data de nascimento.</p></div><div><button class="btn green" onclick="exportData('col')">⬇ Exportar Excel</button> <button class="btn primary" onclick="fileCol.click()">⬆ Importar Excel</button><input id="fileCol" type="file" accept=".xlsx,.xls" hidden onchange="importCol(this)"></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Polo</label><select id="fColPolo" onchange="renderCol()"></select></div><div class="control"><label>Equipe</label><select id="fColEq" onchange="renderCol()"></select></div><div class="control"><label>Pesquisar</label><input id="qCol" oninput="renderCol()" placeholder="Nome ou matrícula"></div></div><div class="tablewrap"><table><thead><tr><th>Matrícula</th><th class="left">Nome</th><th>Polo</th><th>Equipe</th><th class="left">Cargo</th><th>Escala</th><th>Turma</th><th>Horário</th><th>Status</th><th>Ação</th></tr></thead><tbody id="colBody"></tbody></table></div></div></section>
   <section class="page" id="tipos"><div class="page-head"><div><h2>Tipos de Escala e Horários</h2><p>Referência oficial para horários, jornadas e ciclos.</p></div><div><button class="btn green" onclick="exportData('shift')">⬇ Exportar Excel</button> <button class="btn primary" onclick="fileShift.click()">⬆ Importar Excel</button><input id="fileShift" type="file" accept=".xlsx,.xls" hidden onchange="importShift(this)"></div></div><div class="surface"><div class="tablewrap"><table><thead><tr><th>Código</th><th>Tipo</th><th>Início</th><th>Fim</th><th>Intervalo</th><th>Jornada trabalhada</th><th>Dias</th><th>Categoria</th><th>Alteração</th><th>Ação</th></tr></thead><tbody id="shiftBody"></tbody></table></div></div></section>
-  <section class="page" id="escala"><div class="page-head"><div><h2>Geração e Edição da Escala 4x2</h2><p>Selecione polo e equipe para visualizar, adicionar, retirar ou transferir colaboradores.</p></div><div><button class="btn primary" onclick="openScaleEditor()">✎ Editar escala</button> <button class="btn green" onclick="exportScale()">⬇ Exportar Excel</button></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Polo</label><select id="sPolo" onchange="fillScaleTeams();renderScale()"></select></div><div class="control"><label>Ano</label><select id="sYear" onchange="renderScale()"></select></div><div class="control"><label>Mês</label><select id="sMonth" onchange="renderScale()"></select></div><div class="control"><label>Equipe</label><select id="sTeam" onchange="renderScale()"></select></div></div><div id="teamCards" class="teamcards"></div><div class="tablewrap"><table id="scaleTable"></table></div><div class="legend"><span><i class="work">8</i> Trabalho</span><span><i class="off">F</i> Folga</span><span><i class="vac">FÉ</i> Férias</span><span><i class="ot">HE</i> Hora extra</span></div></div></section>
+  <section class="page" id="escala"><div class="page-head"><div><h2>Geração da Escala 4x2</h2><p>Selecione polo e equipe para visualizar a escala mensal.</p></div><div><button class="btn primary" onclick="openEditScale()">✎ Editar escala</button> <button class="btn green" onclick="exportScale()">⬇ Exportar Excel</button></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Polo</label><select id="sPolo" onchange="fillScaleTeams();renderScale()"></select></div><div class="control"><label>Ano</label><select id="sYear" onchange="renderScale()"></select></div><div class="control"><label>Mês</label><select id="sMonth" onchange="renderScale()"></select></div><div class="control"><label>Equipe</label><select id="sTeam" onchange="renderScale()"></select></div></div><div id="teamCards" class="teamcards"></div><div class="tablewrap"><table id="scaleTable"></table></div><div class="legend"><span><i class="work">8</i> Trabalho</span><span><i class="off">F</i> Folga</span><span><i class="vac">FÉ</i> Férias</span><span><i class="ot">HE</i> Hora extra</span></div></div></section>
   <section class="page" id="ferias"><div class="page-head"><div><h2>Férias + Substituto</h2><p>Registre o afastamento e informe quem cobrirá o colaborador.</p></div><div><button class="btn green" onclick="exportData('vac')">⬇ Exportar Excel</button> <button class="btn primary" onclick="openVacation()">+ Nova Férias</button></div></div><div class="surface"><div class="tablewrap"><table><thead><tr><th>Matrícula</th><th class="left">Colaborador</th><th>Início</th><th>Fim</th><th>Dias</th><th class="left">Substituto</th><th>Status</th><th>Ação</th></tr></thead><tbody id="vacBody"></tbody></table></div></div></section>
   <section class="page" id="horaextra"><div class="page-head"><div><h2>Hora Extra</h2><p>Controle individual de horas extras.</p></div><div><button class="btn green" onclick="exportData('ot')">⬇ Exportar Excel</button> <button class="btn primary" onclick="openOT()">+ Nova Hora Extra</button></div></div><div class="surface"><div class="tablewrap"><table><thead><tr><th>Data</th><th>Matrícula</th><th class="left">Colaborador</th><th>Equipe</th><th>Horas</th><th class="left">Motivo</th><th>Ação</th></tr></thead><tbody id="otBody"></tbody></table></div></div></section>
-  <section class="page" id="historico"><div class="page-head"><div><h2>Histórico de Mudanças</h2><p>Mudanças de escala e turma importadas da planilha oficial.</p></div><div><button class="btn green" onclick="exportData('hist')">⬇ Exportar Excel</button> <button class="btn primary" onclick="fileHist.click()">⬆ Importar Excel</button><input id="fileHist" type="file" accept=".xlsx,.xls" hidden onchange="importHist(this)"></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Período</label><select id="hPeriod" onchange="renderHist()"></select></div><div class="control"><label>Pesquisar</label><input id="qHist" oninput="renderHist()" placeholder="Matrícula, nome, escala..."></div></div><div class="tablewrap"><table><thead><tr><th>Período</th><th>Data</th><th>Matrícula</th><th class="left">Colaborador</th><th>Equipe anterior</th><th>Equipe nova</th><th>Escala anterior</th><th>Escala nova</th><th>Turma anterior</th><th>Turma nova</th><th class="left">Motivo/Observação</th><th>Status</th><th>Ação</th></tr></thead><tbody id="histBody"></tbody></table></div></div></section>
+  <section class="page" id="historico"><div class="page-head"><div><h2>Histórico de Mudanças</h2><p>Mudanças de escala e turma importadas da planilha oficial.</p></div><div><button class="btn green" onclick="exportData('hist')">⬇ Exportar Excel</button> <button class="btn primary" onclick="fileHist.click()">⬆ Importar Excel</button><input id="fileHist" type="file" accept=".xlsx,.xls" hidden onchange="importHist(this)"></div></div><div class="surface"><div class="toolbar"><div class="control"><label>Período</label><select id="hPeriod" onchange="renderHist()"></select></div><div class="control"><label>Pesquisar</label><input id="qHist" oninput="renderHist()" placeholder="Matrícula, nome, escala..."></div></div><div class="tablewrap"><table><thead><tr><th>Período</th><th>Data</th><th>Matrícula</th><th class="left">Colaborador</th><th>Escala anterior</th><th>Escala nova</th><th>Turma anterior</th><th>Turma nova</th><th class="left">Motivo/Observação</th><th>Status</th><th>Ação</th></tr></thead><tbody id="histBody"></tbody></table></div></div></section>
   <section class="page" id="sincronizacao"><div class="page-head"><div><h2>Sincronização para todos os usuários</h2><p>Estrutura preparada para a etapa de banco centralizado.</p></div></div><div class="sync-grid"><div class="sync-card"><b>☁ Sistema Web</b><p>O index funciona no GitHub Pages e pode ser acessado de qualquer dispositivo.</p></div><div class="sync-card"><b>♟ Múltiplos usuários</b><p>Perfis e permissões serão conectados ao backend na etapa 10.</p></div><div class="sync-card"><b>▤ Dados centralizados</b><p>Para todos verem as mesmas alterações, será necessário ligar este front-end ao banco/Worker.</p></div><div class="sync-card"><b>⟳ Tempo real</b><p>Preparado visualmente; a sincronização real depende do backend compartilhado.</p></div><div class="sync-card"><b>🛡 Segurança</b><p>O login desta versão é apenas visual/local. Autenticação real entra com o backend.</p></div><div class="sync-card"><b>▣ Responsivo</b><p>Layout adaptado para desktop, tablet e celular.</p></div></div></section>
  </main>
 </div>
@@ -134,59 +134,99 @@ function fillScaleTeams(){let p=sPolo.value,eq=uniq(activePeople().filter(x=>!p|
 function renderScale(){let p=sPolo.value,e=sTeam.value,y=+sYear.value,m=+sMonth.value;let a=activePeople().filter(x=>(!p||x.polo===p)&&(!e||x.equipe===e));let eqs=uniq(a.map(x=>x.equipe));teamCards.innerHTML=eqs.slice(0,8).map(eq=>{let z=a.filter(x=>x.equipe===eq),sample=z.find(x=>x.escala)||z[0];return `<div class="teamcard"><b>${esc(eq)}</b><div>🕒 ${esc(shiftTime(sample?.escala)||sample?.horario||'Horário não definido')}</div><div>Colaboradores: ${z.length}</div></div>`}).join('');let days=new Date(y,m+1,0).getDate(),dn=['D','S','T','Q','Q','S','S'];let head='<thead><tr><th>Matrícula</th><th class="left">Nome</th><th>Equipe</th><th>Horário da equipe</th>'+Array.from({length:days},(_,i)=>{let d=i+1,dt=new Date(y,m,d);return `<th class="${[0,6].includes(dt.getDay())?'weekend':''}">${d}<br><small>${dn[dt.getDay()]}</small></th>`}).join('')+'</tr></thead>';let body='<tbody>'+a.map(x=>{let turma=Math.max(1,parseInt(x.turma)||1);let cells=Array.from({length:days},(_,i)=>{let date=`${y}-${String(m+1).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`,v=vacations.find(v=>v.matricula===x.matricula&&date>=v.inicio&&date<=v.fim),ot=overtime.find(o=>o.matricula===x.matricula&&o.data===date);if(v)return '<td class="vac">FÉ</td>';if(ot)return '<td class="ot">HE</td>';let pos=(i+(turma-1))%6,work=pos<4;return `<td class="${work?'work':'off'}">${work?'8':'F'}</td>`}).join('');return `<tr><td>${esc(x.matricula)}</td><td class="left">${esc(x.nome)}</td><td>${esc(x.equipe)}</td><td>${esc(shiftTime(x.escala)||x.horario)}</td>${cells}</tr>`}).join('')+'</tbody>';scaleTable.innerHTML=head+body}
 function renderVac(){vacBody.innerHTML=vacations.map(v=>`<tr><td>${esc(v.matricula)}</td><td class="left">${esc(v.nome)}</td><td>${esc(v.inicio)}</td><td>${esc(v.fim)}</td><td>${esc(v.dias)}</td><td class="left">${esc(v.substitutoNome||'')}</td><td><span class="tag amber">${esc(v.status)}</span></td><td><button class="trash" onclick="delVac('${v.id}')">🗑</button></td></tr>`).join('')||'<tr><td colspan="8">Nenhuma férias registrada.</td></tr>'}
 function renderOT(){otBody.innerHTML=overtime.map(o=>`<tr><td>${esc(o.data)}</td><td>${esc(o.matricula)}</td><td class="left">${esc(o.nome)}</td><td>${esc(o.equipe)}</td><td>${esc(o.horas)}</td><td class="left">${esc(o.motivo)}</td><td><button class="trash" onclick="delOT('${o.id}')">🗑</button></td></tr>`).join('')||'<tr><td colspan="7">Nenhuma hora extra registrada.</td></tr>'}
-function renderHist(){let p=hPeriod.value,q=qHist.value.toLowerCase();let a=history.filter(x=>(!p||x.periodo===p)&&Object.values(x).join(' ').toLowerCase().includes(q));histBody.innerHTML=a.map(x=>`<tr><td>${esc(x.periodo)}</td><td>${esc(x.data)}</td><td>${esc(x.matricula)}</td><td class="left">${esc(x.colaborador)}</td><td>${esc(x.equipeAnterior||"")}</td><td>${esc(x.equipeNova||"")}</td><td>${esc(x.escalaAnterior)}</td><td>${esc(x.escalaNova)}</td><td>${esc(x.turmaAnterior)}</td><td>${esc(x.turmaNova)}</td><td class="left">${esc(x.motivo)}</td><td><span class="tag">${esc(x.status)}</span></td><td><button class="trash" onclick="delHist('${x.id}')">🗑</button></td></tr>`).join('')}
+function renderHist(){let p=hPeriod.value,q=qHist.value.toLowerCase();let a=history.filter(x=>(!p||x.periodo===p)&&Object.values(x).join(' ').toLowerCase().includes(q));histBody.innerHTML=a.map(x=>`<tr><td>${esc(x.periodo)}</td><td>${esc(x.data)}</td><td>${esc(x.matricula)}</td><td class="left">${esc(x.colaborador)}</td><td>${esc(x.escalaAnterior)}</td><td>${esc(x.escalaNova)}</td><td>${esc(x.turmaAnterior)}</td><td>${esc(x.turmaNova)}</td><td class="left">${esc((x.equipeAnterior!==undefined||x.equipeNova!==undefined)?((x.motivo||"")+" | Equipe: "+(x.equipeAnterior||"-")+" → "+(x.equipeNova||"-")):x.motivo)}</td><td><span class="tag">${esc(x.status)}</span></td><td><button class="trash" onclick="delHist('${x.id}')">🗑</button></td></tr>`).join('')}
 function renderAll(){fillFilters();renderDash();renderPolos();renderCol();renderShifts();renderScale();renderVac();renderOT();renderHist()}
 function delPerson(m){if(confirm('Excluir somente este colaborador?')){people=people.filter(x=>x.matricula!==m);save();renderAll()}}function delShift(i){if(confirm('Excluir somente este tipo de escala?')){shifts.splice(i,1);save();renderAll()}}function delVac(id){if(confirm('Excluir somente este registro de férias?')){vacations=vacations.filter(x=>x.id!==id);save();renderAll()}}function delOT(id){if(confirm('Excluir somente esta hora extra?')){overtime=overtime.filter(x=>x.id!==id);save();renderAll()}}function delHist(id){if(confirm('Excluir somente este registro do histórico?')){history=history.filter(x=>x.id!==id);save();renderAll()}}
 
-function parseBRDate(s){
- if(!s)return null; let m=String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
- if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1]);}
- let d=new Date(s);return isNaN(d)?null:d;
+/* ===== EDIÇÃO DA ESCALA — complemento isolado ===== */
+function _brDate(v){
+  if(!v)return null;
+  let m=String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if(m){let y=Number(m[3]);if(y<100)y+=2000;let d=new Date(y,Number(m[2])-1,Number(m[1]));return isNaN(d)?null:d}
+  let d=new Date(v); return isNaN(d)?null:d;
 }
-function lastChangeFor(mat){
- return history.map(h=>({h:h,d:parseBRDate(h.data)})).filter(x=>x.h.matricula===mat&&x.d).sort((a,b)=>b.d-a.d)[0]||null;
+function _lastScaleChange(mat){
+  let a=history.map(h=>({h,d:_brDate(h.data)})).filter(x=>x.h.matricula===mat&&x.d);
+  a.sort((x,y)=>y.d-x.d); return a[0]||null;
 }
-function check90BeforeChange(p){
- let x=lastChangeFor(p.matricula); if(!x)return true;
- let days=Math.floor(Math.abs(new Date()-x.d)/86400000); if(days>90)return true;
- return confirm("⚠ ALERTA AO ADMINISTRADOR\n\n"+p.nome+" ("+p.matricula+") possui mudança registrada há "+days+" dia(s).\n\nA regra operacional é de até 90 dias entre mudanças.\nÚltima mudança: "+(x.h.data||x.h.periodo||"-")+"\nEscala: "+(x.h.escalaAnterior||"-")+" → "+(x.h.escalaNova||"-")+"\nTurma: "+(x.h.turmaAnterior||"-")+" → "+(x.h.turmaNova||"-")+"\n\nDeseja autorizar esta nova mudança mesmo assim?");
+function _check90(p){
+  let x=_lastScaleChange(p.matricula); if(!x)return true;
+  let dias=Math.floor((new Date()-x.d)/86400000);
+  if(dias<0||dias>90)return true;
+  return confirm(
+    "⚠ ALERTA DE MUDANÇA EM ATÉ 90 DIAS\n\n"+
+    p.nome+" ("+p.matricula+") possui uma mudança registrada há "+dias+" dia(s).\n\n"+
+    "Última mudança: "+(x.h.data||"-")+"\n"+
+    "Escala: "+(x.h.escalaAnterior||"-")+" → "+(x.h.escalaNova||"-")+"\n"+
+    "Turma: "+(x.h.turmaAnterior||"-")+" → "+(x.h.turmaNova||"-")+"\n\n"+
+    "Esta alteração está dentro da regra de 90 dias.\nDeseja o administrador autorizar mesmo assim?"
+  );
 }
-function openScaleEditor(){
- let polo=sPolo.value, equipe=sTeam.value;
- if(!equipe){alert("Selecione primeiro uma equipe específica.");return}
- let optsShift=shifts.map(s=>'<option value="'+esc(s["CÓD ESCALA"])+'">'+esc((s["CÓD ESCALA"]||"")+" - "+(s["TIPO ESCALA"]||""))+'</option>').join("");
- modalCard.innerHTML='<h3>✎ Editar escala — '+esc(equipe)+'</h3>'+
- '<div class="notice">Adicione, retire ou transfira colaboradores. Se houver mudança registrada nos últimos 90 dias, o administrador receberá um alerta antes da confirmação.</div>'+
- '<div class="formgrid" style="margin-top:14px">'+
- '<div class="control"><label>Ação</label><select id="seAction" onchange="updateScaleEditorOptions()"><option value="add">Adicionar colaborador à equipe</option><option value="remove">Retirar colaborador da escala</option><option value="transfer">Transferir / alterar escala</option></select></div>'+
- '<div class="control"><label>Colaborador</label><select id="sePerson"></select></div>'+
- '<div class="control"><label>Equipe de destino</label><select id="seTeam"></select></div>'+
- '<div class="control"><label>Tipo de escala</label><select id="seShift"><option value="">Manter atual</option>'+optsShift+'</select></div>'+
- '<div class="control"><label>Turma</label><select id="seTurma"><option value="">Manter atual</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>'+
- '<div class="control"><label>Motivo da alteração</label><input id="seReason" placeholder="Informe o motivo"></div></div>'+
- '<div class="modal-actions"><button class="btn light" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveScaleEdit()">Confirmar alteração</button></div>';
- modal.classList.remove("hidden"); updateScaleEditorOptions();
+function openEditScale(){
+  let equipe=sTeam.value, polo=sPolo.value;
+  if(!equipe){alert("Selecione uma equipe específica no filtro Equipe antes de editar a escala.");return}
+  modalCard.innerHTML=`
+    <h3>Editar escala — ${esc(equipe)}</h3>
+    <div class="notice">Somente a equipe selecionada será alterada. Toda mudança ficará registrada no Histórico. Mudanças em até 90 dias geram alerta ao administrador.</div>
+    <div class="formgrid">
+      <div class="control"><label>Ação</label>
+        <select id="edAcao" onchange="_fillEditPeople()">
+          <option value="add">Adicionar colaborador à escala</option>
+          <option value="remove">Retirar colaborador da escala</option>
+          <option value="change">Alterar escala / turma</option>
+        </select>
+      </div>
+      <div class="control"><label>Colaborador</label><select id="edPessoa"></select></div>
+      <div class="control"><label>Tipo de escala</label>
+        <select id="edEscala"><option value="">Manter atual</option>${shifts.map(s=>`<option value="${esc(s['CÓD ESCALA'])}">${esc(s['CÓD ESCALA'])} - ${esc(s['TIPO ESCALA'])} (${esc(shiftTime(s['CÓD ESCALA']))})</option>`).join('')}</select>
+      </div>
+      <div class="control"><label>Turma / fase</label>
+        <select id="edTurma"><option value="">Manter atual</option>${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n}</option>`).join('')}</select>
+      </div>
+      <div class="control" style="grid-column:1/-1"><label>Motivo da alteração</label><input id="edMotivo" placeholder="Ex.: remanejamento operacional, cobertura, retorno à equipe..."></div>
+    </div>
+    <div class="modal-actions"><button class="btn light" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="_saveScaleEdit()">Salvar alteração</button></div>`;
+  modal.classList.remove('hidden'); _fillEditPeople();
 }
-function updateScaleEditorOptions(){
- let action=seAction.value,equipe=sTeam.value,polo=sPolo.value;
- let list=action==="add"?activePeople().filter(x=>x.equipe!==equipe):activePeople().filter(x=>x.equipe===equipe);
- sePerson.innerHTML=list.map(x=>'<option value="'+esc(x.matricula)+'">'+esc(x.matricula+" - "+x.nome+" | "+(x.equipe||"Sem equipe"))+'</option>').join("");
- let teams=uniq(activePeople().filter(x=>!polo||x.polo===polo).map(x=>x.equipe));
- if(action==="add"){seTeam.innerHTML='<option>'+esc(equipe)+'</option>';seTeam.value=equipe}
- else if(action==="remove"){seTeam.innerHTML='<option value="">Sem equipe / fora da escala</option>'}
- else {seTeam.innerHTML=teams.map(x=>'<option '+(x===equipe?"selected":"")+'>'+esc(x)+'</option>').join("")}
+function _fillEditPeople(){
+  let equipe=sTeam.value, polo=sPolo.value, acao=edAcao.value;
+  let a=activePeople().filter(p=>{
+    if(acao==="add") return p.equipe!==equipe && (!polo||p.polo===polo);
+    return p.equipe===equipe;
+  });
+  edPessoa.innerHTML=a.map(p=>`<option value="${esc(p.matricula)}">${esc(p.matricula)} - ${esc(p.nome)}${acao==="add"?" | "+esc(p.equipe||"Sem equipe"):""}</option>`).join('');
+  if(!a.length)edPessoa.innerHTML='<option value="">Nenhum colaborador disponível</option>';
 }
-function saveScaleEdit(){
- let p=people.find(x=>x.matricula===sePerson.value);if(!p){alert("Selecione um colaborador.");return}
- if(!seReason.value.trim()){alert("Informe o motivo da alteração.");return}
- let oldTeam=p.equipe||"",oldShift=p.escala||"",oldTurma=p.turma||"";
- let action=seAction.value,newTeam=action==="remove"?"":seTeam.value,newShift=seShift.value||oldShift,newTurma=seTurma.value||oldTurma;
- if((oldTeam!==newTeam||oldShift!==newShift||oldTurma!==newTurma)&&!check90BeforeChange(p))return;
- p.equipe=newTeam;p.escala=newShift;p.turma=newTurma;
- let n=new Date(),data=String(n.getDate()).padStart(2,"0")+"/"+String(n.getMonth()+1).padStart(2,"0")+"/"+n.getFullYear();
- history.push({id:"E"+Date.now(),periodo:"ALTERAÇÃO MANUAL",data:data,matricula:p.matricula,colaborador:p.nome,equipeAnterior:oldTeam,equipeNova:newTeam,escalaAnterior:oldShift,escalaNova:newShift,turmaAnterior:oldTurma,turmaNova:newTurma,motivo:seReason.value.trim(),status:action==="remove"?"RETIRADO DA ESCALA":"ALTERAÇÃO CONFIRMADA",alteradoPor:userName.textContent||"Administrador"});
- save();closeModal();renderAll();alert("Alteração realizada e registrada no Histórico.");
+function _saveScaleEdit(){
+  let equipe=sTeam.value, acao=edAcao.value, p=people.find(x=>x.matricula===edPessoa.value);
+  if(!p){alert("Selecione um colaborador.");return}
+  if(!edMotivo.value.trim()){alert("Informe o motivo da alteração.");return}
+
+  let antEquipe=p.equipe||"", antEscala=p.escala||"", antTurma=p.turma||"";
+  let novaEquipe=antEquipe, novaEscala=edEscala.value||antEscala, novaTurma=edTurma.value||antTurma;
+
+  if(acao==="add") novaEquipe=equipe;
+  if(acao==="remove") novaEquipe="";
+  if(!_check90(p))return;
+
+  p.equipe=novaEquipe; p.escala=novaEscala; p.turma=novaTurma;
+
+  let d=new Date();
+  let data=String(d.getDate()).padStart(2,'0')+"/"+String(d.getMonth()+1).padStart(2,'0')+"/"+d.getFullYear();
+  history.push({
+    id:"M"+Date.now(), periodo:"ALTERAÇÃO MANUAL", data,
+    matricula:p.matricula, colaborador:p.nome,
+    equipeAnterior:antEquipe, equipeNova:novaEquipe,
+    escalaAnterior:antEscala, escalaNova:novaEscala,
+    turmaAnterior:antTurma, turmaNova:novaTurma,
+    motivo:edMotivo.value.trim(),
+    status:acao==="add"?"ADICIONADO À ESCALA":acao==="remove"?"RETIRADO DA ESCALA":"ESCALA ALTERADA",
+    alteradoPor:userName.textContent||"Administrador"
+  });
+  save(); closeModal(); renderAll();
+  alert("Alteração salva com sucesso e registrada no Histórico.");
 }
+/* ===== fim do complemento ===== */
 
 function openVacation(){let opts=activePeople().map(x=>`<option value="${esc(x.matricula)}">${esc(x.matricula+' - '+x.nome)}</option>`).join('');modalCard.innerHTML=`<h3>Registrar Férias</h3><div class="formgrid"><div class="control"><label>Colaborador</label><select id="vPerson">${opts}</select></div><div class="control"><label>Substituto</label><select id="vSub"><option value="">Selecione...</option>${opts}</select></div><div class="control"><label>Data início</label><input id="vStart" type="date"></div><div class="control"><label>Data fim</label><input id="vEnd" type="date"></div><div class="control"><label>Status</label><select id="vStatus"><option>Programada</option><option>Em andamento</option><option>Concluída</option></select></div></div><div class="modal-actions"><button class="btn light" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveVacation()">Salvar</button></div>`;modal.classList.remove('hidden')}
 function saveVacation(){let p=people.find(x=>x.matricula===vPerson.value),s=people.find(x=>x.matricula===vSub.value);if(!p||!vStart.value||!vEnd.value){alert('Preencha colaborador, início e fim.');return};let dias=Math.round((new Date(vEnd.value)-new Date(vStart.value))/86400000)+1;vacations.push({id:'V'+Date.now(),matricula:p.matricula,nome:p.nome,inicio:vStart.value,fim:vEnd.value,dias,substitutoMatricula:s?.matricula||'',substitutoNome:s?.nome||'',status:vStatus.value});save();closeModal();renderAll()}
