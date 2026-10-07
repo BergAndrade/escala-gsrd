@@ -118,6 +118,12 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 .import-summary{margin-left:auto;font-size:12px;color:#496887}
 @media(max-width:700px){.modern-eq-logo{width:120px;height:42px}}
 </style>
+
+<style id="logo-trash-update">
+.login-correct-logo{width:min(610px,82%);height:auto;display:block;margin:0 auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4))}
+.trash-btn{display:inline-flex;align-items:center;gap:6px}
+@media(max-width:900px){.login-correct-logo{width:70%}}
+</style>
 </head><body>
 
 <div id="userAdminModal">
@@ -154,10 +160,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 </div>
 <div id="loginGate">
   <div class="login-hero">
-    <div class="login-logo">
-      <div class="eq-logo">equatorial</div>
-      <div class="eq-energy">ENERGIA</div>
-      <div class="eq-tagline">Por você hoje. <b>Pelo futuro todo dia.</b></div>
+    <div class="login-logo"><img class="login-correct-logo" src="data:image/png;base64,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" alt="Grupo Equatorial Energia"><div class="eq-tagline">Por você hoje. <b>Pelo futuro todo dia.</b></div>
     </div>
     <div class="login-card">
       <div class="login-brand">
@@ -218,19 +221,19 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
   </div>
 </section>
 <section id="cadastro" class="panel"><div class="toolbar">
-<button class="primary" onclick="openEmployee()">+ Cadastrar eletricista</button>
+<button class="primary" onclick="openEmployee()">+ Cadastrar eletricista</button><button class="danger trash-btn" onclick="deleteAllEmployees()">🗑️ Excluir eletricistas</button>
 <button class="excel-btn" onclick="document.getElementById('excelEmpInput').click()">📥 Importar Excel</button>
 <input id="excelEmpInput" type="file" accept=".xlsx,.xls" style="display:none" onchange="importEmployeesExcel(this.files[0]);this.value=''">
 <div><label>Pesquisar</label><input id="searchEmp" placeholder="Matrícula, nome, base ou equipe" oninput="renderEmployees()"></div></div><div class="tablewrap"><table><thead><tr><th>Matrícula</th><th class="left">Nome</th><th>Base</th><th>Equipe/Prefixo</th><th>Cód.</th><th>Turma</th><th>Status</th><th>Ações</th></tr></thead><tbody id="empBody"></tbody></table></div></section>
 <section id="turnos" class="panel"><div class="toolbar">
-<button class="primary" onclick="openShift()">+ Novo tipo de escala</button>
+<button class="primary" onclick="openShift()">+ Novo tipo de escala</button><button class="danger trash-btn" onclick="deleteAllShifts()">🗑️ Excluir tipos</button>
 <button class="excel-btn" onclick="document.getElementById('excelShiftInput').click()">📥 Importar TIPO ESCALA.xlsx</button>
 <input id="excelShiftInput" type="file" accept=".xlsx,.xls" style="display:none" onchange="importShiftsExcel(this.files[0]);this.value=''">
 <span class="hint">Aceita a planilha TIPO ESCALA com código, horário, intervalo e jornada.</span>
 </div><div class="tablewrap"><table><thead><tr><th>Código</th><th>Tipo</th><th>Início</th><th>Fim</th><th>Intervalo</th><th>Jornada</th><th>Dias</th><th>Ciclo banco</th><th>Alteração</th><th>Ações</th></tr></thead><tbody id="shiftBody"></tbody></table></div></section>
 <section id="ferias" class="panel">
   <div class="toolbar">
-    <button class="primary" onclick="openVacation()">+ Registrar férias</button><button class="secondary" onclick="exportVacationsExcel()">📊 Excel Férias</button>
+    <button class="primary" onclick="openVacation()">+ Registrar férias</button><button class="danger trash-btn" onclick="deleteAllVacations()">🗑️ Excluir férias</button><button class="secondary" onclick="exportVacationsExcel()">📊 Excel Férias</button>
     <div><label>Pesquisar</label><input id="searchVac" placeholder="Matrícula, nome, equipe ou base" oninput="renderVacations()"></div>
     <div><label>Situação</label><select id="vacStatusFilter" onchange="renderVacations()"><option value="">Todas</option><option value="ATUAL">Em férias agora</option><option value="FUTURA">Futuras</option><option value="ENCERRADA">Encerradas</option></select></div>
   </div>
@@ -260,7 +263,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 
 <section id="horasExtras" class="panel">
   <div class="toolbar">
-    <button class="primary" onclick="openOvertime()">+ Registrar hora extra</button>
+    <button class="primary" onclick="openOvertime()">+ Registrar hora extra</button><button class="danger trash-btn" onclick="deleteAllOvertime()">🗑️ Excluir horas extras</button>
     <button class="secondary" onclick="exportOvertimeExcel()">📊 Excel Hora Extra</button>
     <div><label>Mês</label><input id="heMonth" type="month" onchange="renderOvertime()"></div>
     <div><label>Base</label><select id="heBase" onchange="renderOvertime()"><option value="">Todas as bases</option></select></div>
@@ -277,7 +280,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 </section>
 
 <section id="historico" class="panel">
-  <div class="toolbar">
+  <div class="toolbar"><button class="danger trash-btn" onclick="deleteAllHistory()">🗑️ Apagar históricos</button>
     <div><label>Pesquisar</label><input id="searchHist" placeholder="Matrícula, nome, equipe ou escala" oninput="renderHistory()"></div>
     <div><label>Situação</label><select id="histStatus" onchange="renderHistory()"><option value="">Todas</option><option value="PERMITIDO">Permitidas</option><option value="ALERTA">Alertas &lt; 90 dias</option></select></div>
     <div><label>Mês</label><input id="histMonth" type="month" onchange="renderHistory()"></div>
@@ -904,5 +907,48 @@ renderHistory=function(){
 };
 ensureMasterShifts();ensureImportedHistory();
 setTimeout(()=>{renderShifts();renderHistory();},0);
+</script>
+
+<script id="trash-actions">
+function confirmDeleteAll(label){return confirm('ATENÇÃO!\n\nDeseja realmente excluir '+label+'?\n\nEsta ação não poderá ser desfeita.');}
+async function tryCloudDelete(path){
+  try{await api(path,{method:'DELETE'});return true}catch(e){console.warn('Exclusão na nuvem indisponível para',path,e);return false}
+}
+async function deleteAllEmployees(){
+ if(!confirmDeleteAll('TODOS os eletricistas'))return;
+ for(const e of [...employees]){try{await api('/eletricistas/'+encodeURIComponent(e.matricula),{method:'DELETE'})}catch(_){}}
+ employees=[];roster=[];localStorage.setItem('gsrd_employees','[]');localStorage.setItem('gsrd_roster','[]');
+ renderEmployees();fillPoloFilter();fillPrefixFilter();renderScale();alert('Eletricistas excluídos.');
+}
+async function deleteAllShifts(){
+ if(!confirmDeleteAll('TODOS os tipos de escala'))return;
+ for(const s of [...shifts]){try{await api('/tipos-escala/'+encodeURIComponent(s.codigo),{method:'DELETE'})}catch(_){}}
+ shifts=[];localStorage.setItem('gsrd_shifts','[]');renderShifts();renderScale();alert('Tipos de escala excluídos.');
+}
+function deleteAllVacations(){
+ if(!confirmDeleteAll('TODOS os registros de férias'))return;
+ vacations=[];localStorage.setItem('gsrd_vacations','[]');renderVacations();renderScale();alert('Férias excluídas.');
+}
+function deleteAllCollaborators(){
+ if(!confirmDeleteAll('TODOS os colaboradores'))return;
+ collaborators=[];localStorage.setItem('gsrd_collaborators','[]');renderCollaborators();alert('Colaboradores excluídos.');
+}
+function deleteAllOvertime(){
+ if(!confirmDeleteAll('TODOS os registros de hora extra'))return;
+ overtime=[];localStorage.setItem('gsrd_overtime','[]');renderOvertime();renderScale();alert('Horas extras excluídas.');
+}
+function deleteAllHistory(){
+ if(!confirmDeleteAll('TODO o histórico de mudanças de escala'))return;
+ changeHistory=[];localStorage.setItem('gsrd_change_history','[]');
+ // Prevent the imported seed from being reinserted automatically after this explicit deletion.
+ localStorage.setItem('gsrd_history_seed_deleted','1');
+ renderHistory();alert('Histórico apagado.');
+}
+// Honor explicit history deletion on future page loads.
+const _ensureImportedHistoryOriginal=ensureImportedHistory;
+ensureImportedHistory=function(){
+ if(localStorage.getItem('gsrd_history_seed_deleted')==='1')return;
+ _ensureImportedHistoryOriginal();
+};
 </script>
 </body></html>
