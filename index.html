@@ -98,6 +98,20 @@ main{max-width:none;padding:0 14px 18px}
 body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 @media(max-width:900px){.login-hero{grid-template-columns:1fr;padding:20px}.login-logo{display:none}#loginGate .login-card{width:min(420px,94vw)}.tabs{margin-left:0;top:58px}.team-cards{grid-template-columns:1fr 1fr}}
 </style>
+
+<style id="single-team-fidelity">
+.team-cards.single-team{
+  display:grid!important;
+  grid-template-columns:minmax(300px, 1fr)!important;
+}
+.team-cards.single-team .team-card{
+  width:100%!important;
+  max-width:none!important;
+  min-height:102px;
+}
+.team-cards.single-team .team-card h3{font-size:18px}
+.team-cards.single-team .team-hour{font-size:17px}
+</style>
 </head><body>
 
 <div id="userAdminModal">
@@ -179,7 +193,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
     <div><label>Polo</label><select id="fPolo" onchange="onPoloChange()"></select></div>
     <div><label>Ano</label><select id="ano" onchange="fillDayFilter();renderScale()"></select></div>
     <div><label>Mês</label><select id="mes"></select></div>
-    <div><label>Equipe</label><select id="fPrefixo" onchange="renderScale()"><option value="">Todas as equipes</option></select></div>
+    <div><label>Equipe</label><select id="fPrefixo" onchange="renderTeamCards();renderScale()"><option value="">Todas as equipes</option></select></div>
     <select id="fDia" style="display:none"><option value="">Todos os dias</option></select>
     <input id="matEscala" style="display:none">
     <div class="toolbar-spacer"></div>
@@ -703,15 +717,21 @@ function renderTeamCards(){
   const box=document.getElementById('teamCards'); if(!box)return;
   const polo=document.getElementById('fPolo')?.value||'';
   const selected=document.getElementById('fPrefixo')?.value||'';
-  const teams=[...new Set(employees.map(e=>e.equipe).filter(Boolean))]
+  let teams=[...new Set(employees.map(e=>e.equipe).filter(Boolean))]
     .filter(t=>!polo||poloOfTeam(t)===polo).sort();
+
+  // Regra aprovada: selecionou uma equipe = exibe somente essa equipe.
+  if(selected) teams=teams.filter(t=>t===selected);
+
+  box.classList.toggle('single-team',!!selected);
   box.innerHTML=teams.map(team=>{
     const people=employees.filter(e=>e.equipe===team);
     const sh=teamShift(team);
     const configured=people.filter(e=>e.codigo&&e.turma).length;
     const icon=sh&&parseInt(sh.inicio||'0')>=17?'☾':'☀';
-    return `<div class="team-card ${selected===team?'active':''}" onclick="selectTeam('${team.replace(/'/g,"\\'")}')">
-      <h3>${team}</h3><div class="team-hour">${icon} ${fmtHour(sh)}</div>
+    return `<div class="team-card ${selected===team?'active':''}" onclick="selectTeam('${team.replace(/'/g,"\'")}')">
+      <h3>${team}</h3>
+      <div class="team-hour">${icon} ${fmtHour(sh)}</div>
       <div class="team-meta"><span>Eletricistas: ${people.length}</span><span>Configurados: ${configured}</span></div>
     </div>`;
   }).join('')||'<div class="hint">Nenhuma equipe encontrada para este polo.</div>';
