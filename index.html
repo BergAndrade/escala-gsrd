@@ -124,6 +124,10 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 .trash-btn{display:inline-flex;align-items:center;gap:6px}
 @media(max-width:900px){.login-correct-logo{width:70%}}
 </style>
+
+<style id="individual-trash-style">
+.icon-trash{min-width:34px!important;width:34px;height:32px;padding:0!important;display:inline-grid!important;place-items:center;font-size:15px;border-radius:7px}
+</style>
 </head><body>
 
 <div id="userAdminModal">
@@ -221,19 +225,19 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
   </div>
 </section>
 <section id="cadastro" class="panel"><div class="toolbar">
-<button class="primary" onclick="openEmployee()">+ Cadastrar eletricista</button><button class="danger trash-btn" onclick="deleteAllEmployees()">🗑️ Excluir eletricistas</button>
+<button class="primary" onclick="openEmployee()">+ Cadastrar eletricista</button>
 <button class="excel-btn" onclick="document.getElementById('excelEmpInput').click()">📥 Importar Excel</button>
 <input id="excelEmpInput" type="file" accept=".xlsx,.xls" style="display:none" onchange="importEmployeesExcel(this.files[0]);this.value=''">
 <div><label>Pesquisar</label><input id="searchEmp" placeholder="Matrícula, nome, base ou equipe" oninput="renderEmployees()"></div></div><div class="tablewrap"><table><thead><tr><th>Matrícula</th><th class="left">Nome</th><th>Base</th><th>Equipe/Prefixo</th><th>Cód.</th><th>Turma</th><th>Status</th><th>Ações</th></tr></thead><tbody id="empBody"></tbody></table></div></section>
 <section id="turnos" class="panel"><div class="toolbar">
-<button class="primary" onclick="openShift()">+ Novo tipo de escala</button><button class="danger trash-btn" onclick="deleteAllShifts()">🗑️ Excluir tipos</button>
+<button class="primary" onclick="openShift()">+ Novo tipo de escala</button>
 <button class="excel-btn" onclick="document.getElementById('excelShiftInput').click()">📥 Importar TIPO ESCALA.xlsx</button>
 <input id="excelShiftInput" type="file" accept=".xlsx,.xls" style="display:none" onchange="importShiftsExcel(this.files[0]);this.value=''">
 <span class="hint">Aceita a planilha TIPO ESCALA com código, horário, intervalo e jornada.</span>
 </div><div class="tablewrap"><table><thead><tr><th>Código</th><th>Tipo</th><th>Início</th><th>Fim</th><th>Intervalo</th><th>Jornada</th><th>Dias</th><th>Ciclo banco</th><th>Alteração</th><th>Ações</th></tr></thead><tbody id="shiftBody"></tbody></table></div></section>
 <section id="ferias" class="panel">
   <div class="toolbar">
-    <button class="primary" onclick="openVacation()">+ Registrar férias</button><button class="danger trash-btn" onclick="deleteAllVacations()">🗑️ Excluir férias</button><button class="secondary" onclick="exportVacationsExcel()">📊 Excel Férias</button>
+    <button class="primary" onclick="openVacation()">+ Registrar férias</button><button class="secondary" onclick="exportVacationsExcel()">📊 Excel Férias</button>
     <div><label>Pesquisar</label><input id="searchVac" placeholder="Matrícula, nome, equipe ou base" oninput="renderVacations()"></div>
     <div><label>Situação</label><select id="vacStatusFilter" onchange="renderVacations()"><option value="">Todas</option><option value="ATUAL">Em férias agora</option><option value="FUTURA">Futuras</option><option value="ENCERRADA">Encerradas</option></select></div>
   </div>
@@ -263,7 +267,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 
 <section id="horasExtras" class="panel">
   <div class="toolbar">
-    <button class="primary" onclick="openOvertime()">+ Registrar hora extra</button><button class="danger trash-btn" onclick="deleteAllOvertime()">🗑️ Excluir horas extras</button>
+    <button class="primary" onclick="openOvertime()">+ Registrar hora extra</button>
     <button class="secondary" onclick="exportOvertimeExcel()">📊 Excel Hora Extra</button>
     <div><label>Mês</label><input id="heMonth" type="month" onchange="renderOvertime()"></div>
     <div><label>Base</label><select id="heBase" onchange="renderOvertime()"><option value="">Todas as bases</option></select></div>
@@ -280,7 +284,7 @@ body.dark #escala,body.dark .tabs,body.dark .tab{background:#142238}
 </section>
 
 <section id="historico" class="panel">
-  <div class="toolbar"><button class="danger trash-btn" onclick="deleteAllHistory()">🗑️ Apagar históricos</button>
+  <div class="toolbar">
     <div><label>Pesquisar</label><input id="searchHist" placeholder="Matrícula, nome, equipe ou escala" oninput="renderHistory()"></div>
     <div><label>Situação</label><select id="histStatus" onchange="renderHistory()"><option value="">Todas</option><option value="PERMITIDO">Permitidas</option><option value="ALERTA">Alertas &lt; 90 dias</option></select></div>
     <div><label>Mês</label><input id="histMonth" type="month" onchange="renderHistory()"></div>
@@ -461,7 +465,7 @@ async function cloudSync(showMessage=false){
 async function cloudCheck(){try{let x=await api('/');setCloudStatus(x.status==='API ONLINE'?'☁️ API ONLINE':'☁️ conectado',true)}catch(e){setCloudStatus('☁️ offline — modo local',false)}}
 function init(){let m=document.getElementById('mes');meses.forEach((x,i)=>m.add(new Option(x,i+1)));m.value=8;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));m.onchange=()=>{fillDayFilter();renderScale()};document.getElementById('ano').onchange=()=>{fillDayFilter();renderScale()};fillDayFilter();fillPrefixFilter();applyTheme();renderEmployees();renderShifts();renderVacations();fillCollaboratorFilters();renderCollaborators();renderOvertime();renderHistory();renderScale();}
 function showTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));}
-function renderEmployees(){let q=(document.getElementById('searchEmp').value||'').toLowerCase();let rows=employees.filter(e=>Object.values(e).join(' ').toLowerCase().includes(q));document.getElementById('empBody').innerHTML=rows.map(e=>`<tr><td>${e.matricula}</td><td class="left">${e.nome}</td><td>${e.base}</td><td>${e.equipe||'-'}</td><td>${e.codigo||'-'}</td><td>${e.turma||'-'}</td><td><span class="tag">${e.ativo}</span></td><td><button class="secondary" onclick="openEmployee('${e.matricula}')">Editar</button> <button class="secondary" onclick="openVacation('', '${e.matricula}')">🏖️ Férias</button> <button class="danger" onclick="delEmployee('${e.matricula}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">Nenhum eletricista encontrado.</td></tr>';}
+function renderEmployees(){let q=(document.getElementById('searchEmp').value||'').toLowerCase();let rows=employees.filter(e=>Object.values(e).join(' ').toLowerCase().includes(q));document.getElementById('empBody').innerHTML=rows.map(e=>`<tr><td>${e.matricula}</td><td class="left">${e.nome}</td><td>${e.base}</td><td>${e.equipe||'-'}</td><td>${e.codigo||'-'}</td><td>${e.turma||'-'}</td><td><span class="tag">${e.ativo}</span></td><td><button class="secondary" onclick="openEmployee('${e.matricula}')">Editar</button> <button class="secondary" onclick="openVacation('', '${e.matricula}')">🏖️ Férias</button> <button class="danger icon-trash" title="Excluir este eletricista" onclick="delEmployee('${e.matricula}')">🗑️</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">Nenhum eletricista encontrado.</td></tr>';}
 function openEmployee(mat=''){editMat=mat||null;let e=employees.find(x=>x.matricula===mat)||{matricula:'',nome:'',base:'',equipe:'',codigo:'',turma:'',ativo:'SIM',obs:''};document.getElementById('empTitle').textContent=mat?'Editar eletricista':'Cadastrar eletricista';['Mat','Nome','Base','Equipe','Codigo','Turma','Ativo','Obs'].forEach(k=>{let key={Mat:'matricula',Nome:'nome',Base:'base',Equipe:'equipe',Codigo:'codigo',Turma:'turma',Ativo:'ativo',Obs:'obs'}[k];document.getElementById('f'+k).value=e[key]||'';});fillShiftSelect();document.getElementById('fCodigo').value=e.codigo||'';document.getElementById('empModal').classList.add('show');}
 function fillShiftSelect(){let s=document.getElementById('fCodigo');s.innerHTML='<option value="">Selecione</option>'+shifts.map(x=>`<option value="${x.codigo}">${x.codigo} — ${x.inicio} às ${x.fim}</option>`).join('');}
 function saveEmployee(){
@@ -490,7 +494,7 @@ function saveEmployee(){
  save();closeModal('empModal');fillPrefixFilter();renderEmployees();renderHistory();renderScale();
 }
 function delEmployee(mat){if(!confirm('Excluir este eletricista?'))return;employees=employees.filter(e=>e.matricula!==mat);roster=roster.filter(x=>x!==mat);save();renderEmployees();renderScale();}
-function renderShifts(){shiftBody.innerHTML=shifts.map(s=>`<tr><td>${s.codigo}</td><td>${s.tipo}</td><td>${s.inicio}</td><td>${s.fim}</td><td>${s.intervalo||'-'}</td><td>${s.jornada} h</td><td><button class="danger" onclick="delShift('${s.codigo}')">Excluir</button></td></tr>`).join('');fillShiftSelect();}
+function renderShifts(){shiftBody.innerHTML=shifts.map(s=>`<tr><td>${s.codigo}</td><td>${s.tipo}</td><td>${s.inicio}</td><td>${s.fim}</td><td>${s.intervalo||'-'}</td><td>${s.jornada} h</td><td><button class="danger icon-trash" title="Excluir este tipo de escala" onclick="delShift('${s.codigo}')">🗑️</button></td></tr>`).join('');fillShiftSelect();}
 function openShift(){['sCodigo','sInicio','sFim','sIntervalo','sJornada'].forEach(id=>document.getElementById(id).value='');sTipo.value='4X2';shiftModal.classList.add('show');}
 function saveShift(){let s={codigo:sCodigo.value.trim(),tipo:sTipo.value.trim()||'4X2',inicio:sInicio.value,fim:sFim.value,intervalo:sIntervalo.value.trim(),jornada:Number(sJornada.value||0)};if(!s.codigo||!s.inicio||!s.fim||!s.jornada)return alert('Preencha código, início, fim e jornada.');if(shifts.some(x=>x.codigo===s.codigo))return alert('Código já existe.');shifts.push(s);save();closeModal('shiftModal');renderShifts();renderScale();}
 function delShift(c){if(employees.some(e=>e.codigo===c))return alert('Este código está em uso por eletricistas.');if(confirm('Excluir este tipo de escala?')){shifts=shifts.filter(x=>x.codigo!==c);save();renderShifts();}}
@@ -537,7 +541,7 @@ function renderVacations(){
    return (!q||txt.includes(q))&&(!sf||vacationStatus(v)===sf);
  }).sort((a,b)=>b.inicio.localeCompare(a.inicio));
  let badge=x=>x==='ATUAL'?'<span class="tag" style="background:#eee9ff;color:#5b3bb3">EM FÉRIAS</span>':x==='FUTURA'?'<span class="tag">FUTURA</span>':'<span class="tag">ENCERRADA</span>';
- vacBody.innerHTML=list.map(v=>`<tr class="${vacationStatus(v)==='ATUAL'?'vac-active':''}"><td>${badge(vacationStatus(v))}</td><td>${v.matricula}</td><td class="left">${v.emp?.nome||'Colaborador não encontrado'}</td><td>${v.emp?.base||'-'}</td><td>${v.emp?.equipe||'-'}</td><td>${v.inicio.split('-').reverse().join('/')}</td><td>${v.retorno.split('-').reverse().join('/')}</td><td><b>${vacationDays(v)}</b></td><td class="left">${v.obs||'-'}</td><td><button class="secondary" onclick="openVacation('${v.id}')">Editar</button> <button class="danger" onclick="deleteVacation('${v.id}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="10" class="empty">Nenhum período de férias encontrado.</td></tr>';
+ vacBody.innerHTML=list.map(v=>`<tr class="${vacationStatus(v)==='ATUAL'?'vac-active':''}"><td>${badge(vacationStatus(v))}</td><td>${v.matricula}</td><td class="left">${v.emp?.nome||'Colaborador não encontrado'}</td><td>${v.emp?.base||'-'}</td><td>${v.emp?.equipe||'-'}</td><td>${v.inicio.split('-').reverse().join('/')}</td><td>${v.retorno.split('-').reverse().join('/')}</td><td><b>${vacationDays(v)}</b></td><td class="left">${v.obs||'-'}</td><td><button class="secondary" onclick="openVacation('${v.id}')">Editar</button> <button class="danger icon-trash" title="Excluir estas férias" onclick="deleteVacation('${v.id}')">🗑️</button></td></tr>`).join('')||'<tr><td colspan="10" class="empty">Nenhum período de férias encontrado.</td></tr>';
  let sts=vacations.map(v=>vacationStatus(v));vTotal.textContent=vacations.length;vAtual.textContent=sts.filter(x=>x==='ATUAL').length;vFut.textContent=sts.filter(x=>x==='FUTURA').length;vEnc.textContent=sts.filter(x=>x==='ENCERRADA').length;
 }
 
@@ -814,7 +818,7 @@ renderVacations=function(){
    return (!q||txt.includes(q))&&(!sf||vacationStatus(v)===sf);
  }).sort((a,b)=>b.inicio.localeCompare(a.inicio));
  let badge=x=>x==='ATUAL'?'<span class="tag" style="background:#eee9ff;color:#5b3bb3">EM FÉRIAS</span>':x==='FUTURA'?'<span class="tag">FUTURA</span>':'<span class="tag">ENCERRADA</span>';
- vacBody.innerHTML=list.map(v=>`<tr class="${vacationStatus(v)==='ATUAL'?'vac-active':''}"><td>${badge(vacationStatus(v))}</td><td>${v.matricula}</td><td class="left">${v.emp?.nome||'Colaborador não encontrado'}</td><td>${v.emp?.base||'-'}</td><td>${v.emp?.equipe||'-'}</td><td>${v.inicio.split('-').reverse().join('/')}</td><td>${v.retorno.split('-').reverse().join('/')}</td><td><b>${vacationDays(v)}</b></td><td class="left">${v.cover?`${v.cover.nome} (${v.cover.matricula})`:'-'}</td><td class="left">${v.obs||'-'}</td><td><button class="secondary" onclick="openVacation('${v.id}')">Editar</button> <button class="danger" onclick="deleteVacation('${v.id}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="11" class="empty">Nenhum período de férias encontrado.</td></tr>';
+ vacBody.innerHTML=list.map(v=>`<tr class="${vacationStatus(v)==='ATUAL'?'vac-active':''}"><td>${badge(vacationStatus(v))}</td><td>${v.matricula}</td><td class="left">${v.emp?.nome||'Colaborador não encontrado'}</td><td>${v.emp?.base||'-'}</td><td>${v.emp?.equipe||'-'}</td><td>${v.inicio.split('-').reverse().join('/')}</td><td>${v.retorno.split('-').reverse().join('/')}</td><td><b>${vacationDays(v)}</b></td><td class="left">${v.cover?`${v.cover.nome} (${v.cover.matricula})`:'-'}</td><td class="left">${v.obs||'-'}</td><td><button class="secondary" onclick="openVacation('${v.id}')">Editar</button> <button class="danger icon-trash" title="Excluir estas férias" onclick="deleteVacation('${v.id}')">🗑️</button></td></tr>`).join('')||'<tr><td colspan="11" class="empty">Nenhum período de férias encontrado.</td></tr>';
  let sts=vacations.map(v=>vacationStatus(v));vTotal.textContent=vacations.length;vAtual.textContent=sts.filter(x=>x==='ATUAL').length;vFut.textContent=sts.filter(x=>x==='FUTURA').length;vEnc.textContent=sts.filter(x=>x==='ENCERRADA').length;
 };
 renderScale=function(){
@@ -896,14 +900,14 @@ function ensureImportedHistory(){
 const __oldRenderShifts=renderShifts;
 renderShifts=function(){
  let body=document.getElementById('shiftBody');if(!body)return;
- body.innerHTML=shifts.slice().sort((a,b)=>String(a.codigo).localeCompare(String(b.codigo))).map(s=>`<tr><td>${s.codigo}</td><td>${s.tipo||'-'}</td><td>${s.inicio||'-'}</td><td>${s.fim||'-'}</td><td>${s.intervalo||'-'}</td><td>${s.jornada||'-'} h</td><td>${s.dias||'-'}</td><td>${s.cicloBanco||'-'}</td><td>${s.periodoAlteracao||'-'}</td><td><button class="danger" onclick="delShift('${s.codigo}')">Excluir</button></td></tr>`).join('');
+ body.innerHTML=shifts.slice().sort((a,b)=>String(a.codigo).localeCompare(String(b.codigo))).map(s=>`<tr><td>${s.codigo}</td><td>${s.tipo||'-'}</td><td>${s.inicio||'-'}</td><td>${s.fim||'-'}</td><td>${s.intervalo||'-'}</td><td>${s.jornada||'-'} h</td><td>${s.dias||'-'}</td><td>${s.cicloBanco||'-'}</td><td>${s.periodoAlteracao||'-'}</td><td><button class="danger icon-trash" title="Excluir este tipo de escala" onclick="delShift('${s.codigo}')">🗑️</button></td></tr>`).join('');
  fillShiftSelect();
 };
 const __oldRenderHistory=renderHistory;
 renderHistory=function(){
  let body=document.getElementById('histBody');if(!body)return;let rows=historyFiltered();
  hTotal.textContent=rows.length;hAlert.textContent=rows.filter(x=>x.status==='ALERTA').length;hPeople.textContent=new Set(rows.map(x=>x.matricula)).size;
- body.innerHTML=rows.map(h=>`<tr><td>${fmtHistDate(h.timestamp)}</td><td>${h.matricula}</td><td class="left">${h.nome}</td><td>${h.equipeAnterior||'-'}</td><td>${h.equipeNova||'-'}</td><td>${h.codigoAnterior||'-'}</td><td>${h.codigoNovo||'-'}</td><td>${h.turmaAnterior||'-'}</td><td>${h.turmaNova||'-'}</td><td>${h.dias==null?'-':h.dias+' dias'}</td><td>${h.usuarioNome||'Registro anterior'}</td><td><span class="${h.status==='ALERTA'?'status-alert':h.status==='IMPORTADO'?'tag':'status-ok'}">${h.status==='ALERTA'?'⚠️ ALERTA < 90 DIAS':h.status==='IMPORTADO'?'📥 HISTÓRICO IMPORTADO':'✓ PERMITIDO'}</span>${h.observacao?`<div class="hint" style="margin-top:4px">${h.observacao}</div>`:''}</td></tr>`).join('')||'<tr><td colspan="12" class="empty">Nenhuma mudança registrada.</td></tr>';
+ body.innerHTML=rows.map(h=>`<tr><td>${fmtHistDate(h.timestamp)}</td><td>${h.matricula}</td><td class="left">${h.nome}</td><td>${h.equipeAnterior||'-'}</td><td>${h.equipeNova||'-'}</td><td>${h.codigoAnterior||'-'}</td><td>${h.codigoNovo||'-'}</td><td>${h.turmaAnterior||'-'}</td><td>${h.turmaNova||'-'}</td><td>${h.dias==null?'-':h.dias+' dias'}</td><td>${h.usuarioNome||'Registro anterior'}</td><td><span class="${h.status==='ALERTA'?'status-alert':h.status==='IMPORTADO'?'tag':'status-ok'}">${h.status==='ALERTA'?'⚠️ ALERTA < 90 DIAS':h.status==='IMPORTADO'?'📥 HISTÓRICO IMPORTADO':'✓ PERMITIDO'}</span>${h.observacao?`<div class="hint" style="margin-top:4px">${h.observacao}</div>`:''}<div style="margin-top:6px"><button class="danger icon-trash" title="Excluir somente este histórico" onclick="deleteHistoryItem('${h.id}')">🗑️</button></div></td></tr>`).join('')||'<tr><td colspan="12" class="empty">Nenhuma mudança registrada.</td></tr>';
 };
 ensureMasterShifts();ensureImportedHistory();
 setTimeout(()=>{renderShifts();renderHistory();},0);
@@ -949,6 +953,32 @@ const _ensureImportedHistoryOriginal=ensureImportedHistory;
 ensureImportedHistory=function(){
  if(localStorage.getItem('gsrd_history_seed_deleted')==='1')return;
  _ensureImportedHistoryOriginal();
+};
+</script>
+
+<script id="individual-trash-fix">
+function deletedHistoryIds(){
+  try{return JSON.parse(localStorage.getItem('gsrd_deleted_history_ids')||'[]')}catch(_){return []}
+}
+function deleteHistoryItem(id){
+  if(!confirm('Excluir somente este registro do histórico?')) return;
+  const item=changeHistory.find(x=>x.id===id);
+  changeHistory=changeHistory.filter(x=>x.id!==id);
+  if(item && String(item.id||'').startsWith('importado_')){
+    const ids=new Set(deletedHistoryIds()); ids.add(id);
+    localStorage.setItem('gsrd_deleted_history_ids',JSON.stringify([...ids]));
+  }
+  localStorage.setItem('gsrd_change_history',JSON.stringify(changeHistory));
+  renderHistory();
+}
+const __ensureImportedHistoryIndividual=ensureImportedHistory;
+ensureImportedHistory=function(){
+  __ensureImportedHistoryIndividual();
+  const deleted=new Set(deletedHistoryIds());
+  if(deleted.size){
+    changeHistory=changeHistory.filter(x=>!deleted.has(x.id));
+    localStorage.setItem('gsrd_change_history',JSON.stringify(changeHistory));
+  }
 };
 </script>
 </body></html>
